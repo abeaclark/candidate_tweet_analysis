@@ -2,7 +2,7 @@ var gulp = require('gulp'),
     browserify = require('gulp-browserify');
 
 gulp.task('scripts', function(){
-  gulp.src(['./components/*.js'])
+  gulp.src(['./components/main.js'])
     .pipe(browserify({
       debug: true,
       transform: ['reactify']

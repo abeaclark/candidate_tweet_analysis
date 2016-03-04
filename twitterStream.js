@@ -50,13 +50,14 @@ var  twitterStream = function() {
     stream.on('tweet', function (tweet) {
       text = tweet.text
       tweetCount ++
-      console.log('Tweet Count: ', tweetCount)
+      // console.log('Tweet Count: ', tweetCount)
 
       if (trumpRegex.test(text)) {
         trumpCount += 1
         trumpTags = hashtagMapperCounter(trumpTags, text);
         trumpSentimentCounter = sentimentCounter(trumpSentimentCounter, text);
-        console.log(SentimentPercent(trumpSentimentCounter))
+        // console.log(SentimentPercent(trumpSentimentCounter))
+        // console.log(trumpCount)
       }
       if (rubioRegex.test(text)) {
         rubioCount += 1
@@ -95,7 +96,7 @@ var  twitterStream = function() {
     // sentimentIndex = [for, against]
 
     var sentimentCounter = function(sentimentIndex, text){
-      console.log(sentimentIndex)
+      // console.log(sentimentIndex)
       var textSentiment = sentiment(text).comparative
 
       if (textSentiment > 0) {

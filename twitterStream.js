@@ -2,7 +2,7 @@
 var Twit = require('twit');
 var sentiment = require('sentiment')
 
-var  twitterStream = function() {
+var  twitterStream = function(socket) {
   var watchList = ['trump', 'rubio', 'carson', 'cruz', 'kasich', 'bernie', 'clinton'];
   var T = new Twit({
       consumer_key:         process.env.T_consumer_key
@@ -70,10 +70,14 @@ var  twitterStream = function() {
       if (kasichRegex.test(text)) {
         kasichCount += 1
         kasichTags = hashtagMapperCounter(kasichTags, text);
+
       }
       if (bernieRegex.test(text)) {
         bernieCount += 1
         bernieTags = hashtagMapperCounter(bernieTags, text);
+        bernieSentimentCounter = sentimentCounter(bernieSentimentCounter, text);
+        socket.emit('tweetCount', bernieCount)
+        socket.emit('positivePercent', SentimentPercent(bernieSentimentCounter))
       }
       if (clintonRegex.test(text)) {
         clintonCount += 1

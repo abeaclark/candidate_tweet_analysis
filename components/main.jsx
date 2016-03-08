@@ -1,24 +1,25 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var PieChart = require("react-chartjs").Pie;
+var OdometerComponent = require('react-odometer');
 
 var socket = require('socket.io-client')();
 
 var Abe = React.createClass({
   getInitialState: function() {
     return {
-      value: 'Abe is hot',
-      negative: .5,
-      positive: .5
+      tweetCount: 0,
+      negative: 0,
+      positive: 1
     }
   },
-  updateState: function(value) {
-    this.setState({value: value})
+  updateState: function(data) {
+    this.setState(data)
   },
   render: function() {
     return (
       <div>
-      {this.state.value}
+      <OdometerComponent value={this.state.tweetCount} />
       <PieChart
         data={[
         {
@@ -44,13 +45,17 @@ var Abe = React.createClass({
   }
 });
 
-
 var main = ReactDOM.render(
   <Abe />,
   document.getElementById('react-mount')
 );
 
-socket.on('update', function (data) {
-  main.updateState(data);
+
+socket.on('tweetCount', function (tweetCount) {
+  main.updateState({tweetCount: tweetCount});
+});
+
+socket.on('positivePercent', function (positivePercent) {
+  main.updateState({positive: positivePercent, negative: (1 - positivePercent)});
 });
 

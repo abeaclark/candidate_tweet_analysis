@@ -2,7 +2,6 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var PieChart = require('./pieChart.jsx')
 
-
 var Abe = React.createClass({
   render: function() {
     return (
@@ -12,7 +11,6 @@ var Abe = React.createClass({
     )
   }
 });
-
 
 
 ReactDOM.render(

@@ -24,21 +24,17 @@ var Chart = React.createClass({displayName: "Chart",
         data: [
         {
         value: this.state.negative,
-        color:"#F7464A",
-        highlight: "#FF5A5E",
-        label: "Negative"
+        color:"#e85a71",
         },
         {
         value: this.state.positive,
-        color: "#46BFBD",
-        highlight: "#5AD3D1",
-        label: "Positive"
+        color: "#5cb072",
         },
         ], 
         options: 
-          {animation: false}, 
+          {animation: false, label: false}, 
         
-        width: "400", 
+        width: "300", 
         height: "150"})
     )
   }
@@ -55,7 +51,7 @@ var Odometer = React.createClass({displayName: "Odometer",
   },
   render: function() {
     return (
-      React.createElement(OdometerComponent, {value: this.state.tweetCount})
+      React.createElement(OdometerComponent, {value: this.state.tweetCount, theme: "plaza"})
     )
   }
 });
@@ -71,8 +67,14 @@ var HashTags = React.createClass({displayName: "HashTags",
   },
   render: function() {
     return (
-      React.createElement("div", null, 
-        this.state.topHashTags
+      React.createElement("ul", null, 
+        this.state.topHashTags.map(function(hashtag) {
+          return( React.createElement("a", {href: "https://twitter.com/hashtag/" + hashtag.substring(1)}, 
+              React.createElement("li", null, hashtag)
+            )
+            );
+          })
+        
       )
     )
   }

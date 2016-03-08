@@ -1,6 +1,7 @@
 // TWITTER STREAM
 var Twit = require('twit');
 var sentiment = require('sentiment')
+var _ = require('lodash')
 
 var  twitterStream = function(socket) {
   var watchList = ['trump', 'rubio', 'carson', 'cruz', 'kasich', 'bernie', 'clinton'];
@@ -77,7 +78,8 @@ var  twitterStream = function(socket) {
         bernieTags = hashtagMapperCounter(bernieTags, text);
         bernieSentimentCounter = sentimentCounter(bernieSentimentCounter, text);
         socket.emit('tweetCount', bernieCount)
-        socket.emit('positivePercent', SentimentPercent(bernieSentimentCounter))
+        socket.emit('positivePercent', SentimentPercent(bernieSentimentCounter));
+        socket.emit('topHashTags', topFiveHashTags(bernieTags));
       }
       if (clintonRegex.test(text)) {
         clintonCount += 1
@@ -95,6 +97,13 @@ var  twitterStream = function(socket) {
         }
       }
       return collection
+    }
+
+    var topFiveHashTags = function(collection) {
+     var sorted = Object.keys(collection).sort(function(a,b){
+        return collection[b]-collection[a]
+      });
+     return sorted.slice(0, 5);
     }
 
     // sentimentIndex = [for, against]

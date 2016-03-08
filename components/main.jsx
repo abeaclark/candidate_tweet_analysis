@@ -10,7 +10,8 @@ var Abe = React.createClass({
     return {
       tweetCount: 0,
       negative: 0,
-      positive: 1
+      positive: 1,
+      topHashTags: []
     }
   },
   updateState: function(data) {
@@ -40,6 +41,9 @@ var Abe = React.createClass({
         }
         width="400"
         height="150"/>
+        <div>
+          {this.state.topHashTags}
+        </div>
       </div>
     )
   }
@@ -59,3 +63,6 @@ socket.on('positivePercent', function (positivePercent) {
   main.updateState({positive: positivePercent, negative: (1 - positivePercent)});
 });
 
+socket.on('topHashTags', function (topHashTags) {
+  main.updateState({topHashTags: topHashTags});
+});

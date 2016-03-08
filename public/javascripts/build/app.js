@@ -11,7 +11,8 @@ var Abe = React.createClass({displayName: "Abe",
     return {
       tweetCount: 0,
       negative: 0,
-      positive: 1
+      positive: 1,
+      topHashTags: []
     }
   },
   updateState: function(data) {
@@ -40,7 +41,10 @@ var Abe = React.createClass({displayName: "Abe",
           {animation: false}, 
         
         width: "400", 
-        height: "150"})
+        height: "150"}), 
+        React.createElement("div", null, 
+          this.state.topHashTags
+        )
       )
     )
   }
@@ -58,6 +62,10 @@ socket.on('tweetCount', function (tweetCount) {
 
 socket.on('positivePercent', function (positivePercent) {
   main.updateState({positive: positivePercent, negative: (1 - positivePercent)});
+});
+
+socket.on('topHashTags', function (topHashTags) {
+  main.updateState({topHashTags: topHashTags});
 });
 
 },{"react":173,"react-chartjs":8,"react-dom":16,"react-odometer":17,"socket.io-client":174}],2:[function(require,module,exports){

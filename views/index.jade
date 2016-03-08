@@ -1,15 +1,30 @@
 html
   head
     title Twitter Sentiment
-
+    link(href='https://fonts.googleapis.com/css?family=Quicksand:400,700,300', rel='stylesheet', type='text/css')
     link(href='/stylesheets/odometer.css', rel="stylesheet")
-    link(href='/stylesheets/style.css', rel="stylesheet")
-  body
-    h1 Hello, this is in Jade
-    #react-mount
+    link(href='/stylesheets/custom.css', rel="stylesheet")
+  body.flex
+    .container.flex
+        .profile
+            .photo-container.flex
+                .name-join-photo
+                    img.headshot(src="/images/bernie.png")
+                    div.name Bernie
+            .sentiment-title.flex
+                span Sentiment
+            .sentiment-container.flex
+                #react-mount
+            .tweet-count-title.flex
+                span Tweet Ticker
+            .tweet-count-container.flex
+            .top-tags-title.flex
+                span Trending Hash Tags
+            .top-tags-container.flex
+
 
 
     script(src="javascripts/odometer.js")
     script(src="javascripts/react.js")
     script(src="javascripts/react-dom.js")
-    script(src="javascripts/main.js")
+    script(src="javascripts/build/app.js")

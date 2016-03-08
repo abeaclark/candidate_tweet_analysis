@@ -1,26 +1,19 @@
-var gulp = require('gulp'),
-    browserify = require('gulp-browserify'),
-    autoprefixer = require('gulp-autoprefixer');
+var gulp = require('gulp');
+var source = require('vinyl-source-stream');
+var browserify = require('browserify');
+var reactify = require('reactify');
 
-gulp.task('scripts', function(){
-  gulp.src(['./components/main.js'])
-    .pipe(browserify({
-      debug: true,
-      transform: ['reactify']
-    }))
-    .pipe(gulp.dest('./public/javascripts/'));
 
-});
-
-gulp.task('styles', function(){
-  gulp.src(['./custom.css'])
-    .pipe(autoprefixer())
-    .pipe(gulp.dest('./public/stylesheets/'));
+gulp.task('js', function(){
+    browserify('./components/main.jsx')
+        .transform(reactify)
+        .bundle()
+        .pipe(source('app.js'))
+        .pipe(gulp.dest('public/javascripts/build/'));
 });
 
 gulp.task('watch', function() {
-  gulp.watch('./public/stylesheets/custom.css', ['styles'])
-});
+    gulp.watch("components/*.jsx", ["js"])
+})
 
-
-gulp.task('default', ['scripts', 'styles'])
+gulp.task('default', ['js', 'watch']);

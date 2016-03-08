@@ -5,7 +5,7 @@ var OdometerComponent = require('react-odometer');
 
 var socket = require('socket.io-client')();
 
-var Abe = React.createClass({
+var Chart = React.createClass({
   getInitialState: function() {
     return {
       tweetCount: 0,
@@ -19,8 +19,6 @@ var Abe = React.createClass({
   },
   render: function() {
     return (
-      <div>
-      <OdometerComponent value={this.state.tweetCount} />
       <PieChart
         data={[
         {
@@ -41,28 +39,70 @@ var Abe = React.createClass({
         }
         width="400"
         height="150"/>
-        <div>
-          {this.state.topHashTags}
-        </div>
+    )
+  }
+});
+
+var Odometer = React.createClass({
+  getInitialState: function() {
+    return {
+      tweetCount: 0,
+    }
+  },
+  updateState: function(data) {
+    this.setState(data)
+  },
+  render: function() {
+    return (
+      <OdometerComponent value={this.state.tweetCount} />
+    )
+  }
+});
+
+var HashTags = React.createClass({
+  getInitialState: function() {
+    return {
+      topHashTags: []
+    }
+  },
+  updateState: function(data) {
+    this.setState(data)
+  },
+  render: function() {
+    return (
+      <div>
+        {this.state.topHashTags}
       </div>
     )
   }
 });
 
-var main = ReactDOM.render(
-  <Abe />,
-  document.getElementById('react-mount')
+
+var chart = ReactDOM.render(
+  <Chart />,
+  document.getElementById('react-chart-mount')
+);
+
+var odometer = ReactDOM.render(
+  <Odometer />,
+  document.getElementById('react-odometer-mount')
+);
+
+var hashtags = ReactDOM.render(
+  <HashTags />,
+  document.getElementById('react-hashtags-mount')
 );
 
 
-socket.on('tweetCount', function (tweetCount) {
-  main.updateState({tweetCount: tweetCount});
-});
 
 socket.on('positivePercent', function (positivePercent) {
-  main.updateState({positive: positivePercent, negative: (1 - positivePercent)});
+ chart.updateState({positive: positivePercent, negative: (1 - positivePercent)});
+});
+
+socket.on('tweetCount', function (tweetCount) {
+  odometer.updateState({tweetCount: tweetCount});
 });
 
 socket.on('topHashTags', function (topHashTags) {
-  main.updateState({topHashTags: topHashTags});
+  hashtags.updateState({topHashTags: topHashTags});
 });

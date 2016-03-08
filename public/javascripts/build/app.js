@@ -6,7 +6,7 @@ var OdometerComponent = require('react-odometer');
 
 var socket = require('socket.io-client')();
 
-var Abe = React.createClass({displayName: "Abe",
+var Chart = React.createClass({displayName: "Chart",
   getInitialState: function() {
     return {
       tweetCount: 0,
@@ -20,8 +20,6 @@ var Abe = React.createClass({displayName: "Abe",
   },
   render: function() {
     return (
-      React.createElement("div", null, 
-      React.createElement(OdometerComponent, {value: this.state.tweetCount}), 
       React.createElement(PieChart, {
         data: [
         {
@@ -41,31 +39,73 @@ var Abe = React.createClass({displayName: "Abe",
           {animation: false}, 
         
         width: "400", 
-        height: "150"}), 
-        React.createElement("div", null, 
-          this.state.topHashTags
-        )
+        height: "150"})
+    )
+  }
+});
+
+var Odometer = React.createClass({displayName: "Odometer",
+  getInitialState: function() {
+    return {
+      tweetCount: 0,
+    }
+  },
+  updateState: function(data) {
+    this.setState(data)
+  },
+  render: function() {
+    return (
+      React.createElement(OdometerComponent, {value: this.state.tweetCount})
+    )
+  }
+});
+
+var HashTags = React.createClass({displayName: "HashTags",
+  getInitialState: function() {
+    return {
+      topHashTags: []
+    }
+  },
+  updateState: function(data) {
+    this.setState(data)
+  },
+  render: function() {
+    return (
+      React.createElement("div", null, 
+        this.state.topHashTags
       )
     )
   }
 });
 
-var main = ReactDOM.render(
-  React.createElement(Abe, null),
-  document.getElementById('react-mount')
+
+var chart = ReactDOM.render(
+  React.createElement(Chart, null),
+  document.getElementById('react-chart-mount')
+);
+
+var odometer = ReactDOM.render(
+  React.createElement(Odometer, null),
+  document.getElementById('react-odometer-mount')
+);
+
+var hashtags = ReactDOM.render(
+  React.createElement(HashTags, null),
+  document.getElementById('react-hashtags-mount')
 );
 
 
-socket.on('tweetCount', function (tweetCount) {
-  main.updateState({tweetCount: tweetCount});
-});
 
 socket.on('positivePercent', function (positivePercent) {
-  main.updateState({positive: positivePercent, negative: (1 - positivePercent)});
+ chart.updateState({positive: positivePercent, negative: (1 - positivePercent)});
+});
+
+socket.on('tweetCount', function (tweetCount) {
+  odometer.updateState({tweetCount: tweetCount});
 });
 
 socket.on('topHashTags', function (topHashTags) {
-  main.updateState({topHashTags: topHashTags});
+  hashtags.updateState({topHashTags: topHashTags});
 });
 
 },{"react":173,"react-chartjs":8,"react-dom":16,"react-odometer":17,"socket.io-client":174}],2:[function(require,module,exports){

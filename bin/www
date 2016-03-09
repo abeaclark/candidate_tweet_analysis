@@ -38,11 +38,12 @@ socket = io.listen(server);
 
 socket.on('connection', function(socket){
   console.log('a user connected');
-  socket.emit('update', 'This is the update')
   socket.on('disconnect', function(){
     console.log('user disconnected');
   });
 });
+
+twitterStream(socket);
 
 
 /**
@@ -106,4 +107,3 @@ function onListening() {
 }
 
 
-twitterStream(socket);

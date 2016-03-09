@@ -65,7 +65,7 @@ var Profile = React.createClass({
       <div className="profile">
         <PhotoAndName name={this.props.candidate.name} photoURL={this.props.candidate.photoURL}/>
         <div className="sentiment-title flex">Sentiment</div>
-        <Chart negative={this.props.candidate.negative} positive={this.props.candidate.positive}/>
+        <Chart negative={1 - this.props.candidate.positivePercent} positive={this.props.candidate.positivePercent}/>
         <div className="sentiment-title flex">Tweet Count</div>
         <Odometer tweetCount={this.props.candidate.tweetCount} />
         <div className="sentiment-title flex">Trending HashTags</div>

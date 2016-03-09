@@ -5,15 +5,10 @@ var OdometerComponent = require('react-odometer');
 
 var socket = require('socket.io-client')();
 
-var Profile = React.createClass({
+var AllCandidates = React.createClass({
   getInitialState: function() {
     return {
-      tweetCount: 0,
-      negative: 0,
-      positive: 1,
-      topHashTags: [],
-      photoURL: '',
-      name: '',
+      candidates: []
     }
   },
   updateState: function(data) {
@@ -21,14 +16,30 @@ var Profile = React.createClass({
   },
   render: function() {
     return (
+      <div className="container flex">
+          {this.state.candidates.map(function(candidate) {
+            return(
+              <Profile candidate={candidate} />
+              );
+            })
+          }
+      </div>
+    )
+  }
+});
+
+
+var Profile = React.createClass({
+  render: function() {
+    return (
       <div className="profile">
-        <PhotoAndName name={this.state.name} photoURL={this.state.photoURL}/>
+        <PhotoAndName name={this.props.candidate.name} photoURL={this.props.candidate.photoURL}/>
         <div className="sentiment-title flex">Sentiment</div>
-        <Chart negative={this.state.negative} positive={this.state.positive}/>
+        <Chart negative={this.props.candidate.negative} positive={this.props.candidate.positive}/>
         <div className="sentiment-title flex">Tweet Count</div>
-        <Odometer tweetCount={this.state.tweetCount} />
+        <Odometer tweetCount={this.props.candidate.tweetCount} />
         <div className="sentiment-title flex">Trending HashTags</div>
-        <HashTags topHashTags={this.state.topHashTags} />
+        <HashTags topHashTags={this.props.candidate.topHashTags} />
       </div>
     )
   }
@@ -105,22 +116,16 @@ var HashTags = React.createClass({
 });
 
 
-var profile = ReactDOM.render(
-  <Profile />,
+var allCandidates = ReactDOM.render(
+  <AllCandidates />,
   document.getElementById('react-mount')
 );
 
 
 
 socket.on('Tweet', function (candidates) {
-  candidate = candidates[0]
-  profile.updateState({
-    positive: candidate.positivePercent,
-    negative: (1 - candidate.positivePercent),
-    tweetCount: candidate.tweetCount,
-    topHashTags: candidate.topHashTags,
-    photoURL: candidate.photoURL,
-    name: candidate.name
+  allCandidates.updateState({
+    candidates: candidates
   });
 });
 

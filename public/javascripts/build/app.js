@@ -6,13 +6,15 @@ var OdometerComponent = require('react-odometer');
 
 var socket = require('socket.io-client')();
 
-var Chart = React.createClass({displayName: "Chart",
+var Profile = React.createClass({displayName: "Profile",
   getInitialState: function() {
     return {
       tweetCount: 0,
       negative: 0,
       positive: 1,
-      topHashTags: []
+      topHashTags: [],
+      photoURL: '',
+      name: '',
     }
   },
   updateState: function(data) {
@@ -20,94 +22,107 @@ var Chart = React.createClass({displayName: "Chart",
   },
   render: function() {
     return (
-      React.createElement(PieChart, {
-        data: [
-        {
-        value: this.state.negative,
-        color:"#e85a71",
-        },
-        {
-        value: this.state.positive,
-        color: "#5cb072",
-        },
-        ], 
-        options: 
-          {animation: false, label: false}, 
-        
-        width: "300", 
-        height: "150"})
-    )
-  }
-});
-
-var Odometer = React.createClass({displayName: "Odometer",
-  getInitialState: function() {
-    return {
-      tweetCount: 0,
-    }
-  },
-  updateState: function(data) {
-    this.setState(data)
-  },
-  render: function() {
-    return (
-      React.createElement(OdometerComponent, {value: this.state.tweetCount, theme: "plaza"})
-    )
-  }
-});
-
-var HashTags = React.createClass({displayName: "HashTags",
-  getInitialState: function() {
-    return {
-      topHashTags: []
-    }
-  },
-  updateState: function(data) {
-    this.setState(data)
-  },
-  render: function() {
-    return (
-      React.createElement("ul", null, 
-        this.state.topHashTags.map(function(hashtag) {
-          return( React.createElement("a", {href: "https://twitter.com/hashtag/" + hashtag.substring(1)}, 
-              React.createElement("li", null, hashtag)
-            )
-            );
-          })
-        
+      React.createElement("div", {className: "profile"}, 
+        React.createElement(PhotoAndName, {photoURL: this.state.photURL, name: this.state.name}), 
+        React.createElement("div", {className: "sentiment-title flex"}, "Sentiment"), 
+        React.createElement(Chart, {negative: this.state.negative, positive: this.state.positive}), 
+        React.createElement("div", {className: "sentiment-title flex"}, "Tweet Count"), 
+        React.createElement(Odometer, {tweetCount: this.state.tweetCount}), 
+        React.createElement("div", {className: "sentiment-title flex"}, "Trending HashTags"), 
+        React.createElement(HashTags, {topHashTags: this.state.topHashTags})
       )
     )
   }
 });
 
 
-var chart = ReactDOM.render(
-  React.createElement(Chart, null),
-  document.getElementById('react-chart-mount')
-);
 
-var odometer = ReactDOM.render(
-  React.createElement(Odometer, null),
-  document.getElementById('react-odometer-mount')
-);
-
-var hashtags = ReactDOM.render(
-  React.createElement(HashTags, null),
-  document.getElementById('react-hashtags-mount')
-);
-
-
-
-socket.on('positivePercent', function (positivePercent) {
- chart.updateState({positive: positivePercent, negative: (1 - positivePercent)});
+var Chart = React.createClass({displayName: "Chart",
+  render: function() {
+    return (
+      React.createElement("div", {className: "sentiment-container flex"}, 
+        React.createElement(PieChart, {
+          data: [
+          {
+          value: this.props.negative,
+          color:"#e85a71",
+          },
+          {
+          value: this.props.positive,
+          color: "#5cb072",
+          },
+          ], 
+          options: 
+            {animation: false, label: false}, 
+          
+          width: "300", 
+          height: "150"})
+      )
+    )
+  }
 });
 
-socket.on('tweetCount', function (tweetCount) {
-  odometer.updateState({tweetCount: tweetCount});
+var PhotoAndName = React.createClass({displayName: "PhotoAndName",
+  render: function() {
+    return (
+      React.createElement("div", {className: "photo-container flex"}, 
+        React.createElement("div", {className: "name-join-photo"}, 
+          React.createElement("img", {className: "headshot", src: this.props.photoURL}), 
+          React.createElement("div", {className: "name"}, 
+            this.props.name
+          )
+        )
+      )
+    )
+  }
 });
 
-socket.on('topHashTags', function (topHashTags) {
-  hashtags.updateState({topHashTags: topHashTags});
+var Odometer = React.createClass({displayName: "Odometer",
+  render: function() {
+    return (
+      React.createElement("div", {className: "tweet-count-container flex"}, 
+        React.createElement(OdometerComponent, {value: this.props.tweetCount})
+      )
+    )
+  }
+});
+
+var HashTags = React.createClass({displayName: "HashTags",
+  render: function() {
+    return (
+      React.createElement("div", {className: "top-tags-container flex"}, 
+        React.createElement("ul", null, 
+          this.props.topHashTags.map(function(hashtag) {
+            return( React.createElement("a", {href: "https://twitter.com/hashtag/" + hashtag.substring(1)}, 
+                React.createElement("li", null, hashtag)
+              )
+              );
+            })
+          
+        )
+      )
+    )
+  }
+});
+
+
+var profile = ReactDOM.render(
+  React.createElement(Profile, null),
+  document.getElementById('react-mount')
+);
+
+
+
+socket.on('Tweet', function (candidates) {
+  candidate = candidates[0]
+  profile.updateState({
+    positive: candidate.positivePercent,
+    negative: (1 - candidate.positivePercent),
+    tweetCount: candidate.tweetCount,
+    topHashTags: candidate.topHashTags,
+    photoURL: candidate.photoURL,
+    name: candidate.name
+  });
 });
 
 },{"react":173,"react-chartjs":8,"react-dom":16,"react-odometer":17,"socket.io-client":174}],2:[function(require,module,exports){

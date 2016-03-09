@@ -4,7 +4,8 @@ var sentiment = require('sentiment')
 var _ = require('lodash')
 
 var  twitterStream = function(socket) {
-  var watchList = ['trump', 'rubio', 'carson', 'cruz', 'kasich', 'bernie', 'clinton'];
+
+
   var T = new Twit({
       consumer_key:         process.env.T_consumer_key
     , consumer_secret:      process.env.T_consumer_secret
@@ -12,79 +13,83 @@ var  twitterStream = function(socket) {
     , access_token_secret:  process.env.T_access_token_secret
   })
 
-  var trumpCount = 0
-  var rubioCount = 0
-  var carsonCount = 0
-  var kasichCount = 0
-  var bernieCount = 0
-  var clintonCount = 0
 
-  var trumpTags = {}
-  var rubioTags = {}
-  var carsonTags = {}
-  var kasichTags = {}
-  var bernieTags = {}
-  var clintonTags = {}
+  var candidates = [
+    {
+      name: 'Bernie',
+      photoURL: '/images/bernie.png',
+      regex: /bernie|bernie sanders/ig,
+      tweetCount: 0,
+      hashTags: [],
+      sentiment: [0,0],
+      positivePercent: 0
+    },
+    {
+      name: 'Clinton',
+      photoURL: '/images/clinton.png',
+      regex: /clinton|hillary|Hillary Clinton/ig,
+      tweetCount: 0,
+      hashTags: [],
+      sentiment: [0,0],
+      positivePercent: 0
+    },
+    {
+      name: 'Trump',
+      photoURL: '/images/trump.png',
+      regex: /trump|Donald Trump/ig,
+      tweetCount: 0,
+      hashTags: [],
+      sentiment: [0,0],
+      positivePercent: 0
+    },
+    {
+      name: 'Rubio',
+      photoURL: '/images/rubio.png',
+      regex: /rubio|marco rubio/ig,
+      tweetCount: 0,
+      hashTags: [],
+      sentiment: [0,0],
+      positivePercent: 0
+    },
+    {
+      name: 'Carson',
+      photoURL: '/images/carson.png',
+      regex: /carson|ben carson/ig,
+      tweetCount: 0,
+      hashTags: [],
+      sentiment: [0,0],
+      positivePercent: 0
+    },
+    {
+      name: 'Kasich',
+      photoURL: '/images/kasich.png',
+      regex: /kasich|john kasich/ig,
+      tweetCount: 0,
+      hashTags: [],
+      sentiment: [0,0],
+      positivePercent: 0
+    }
+  ]
 
-  var trumpSentimentCounter = [0,0] // [for, against]
-  var rubioSentimentCounter = [0,0]
-  var carsonSentimentCounter = [0,0]
-  var kasichSentimentCounter = [0,0]
-  var bernieSentimentCounter = [0,0]
-  var clintonSentimentCounter = [0,0]
-
-  var trumpRegex = /trump|Donald Trump/ig
-  var rubioRegex = /rubio|marco rubio/ig
-  var carsonRegex = /carson|ben carson/ig
-  var kasichRegex = /kasich|john kasich/ig
-  var bernieRegex = /bernie|bernie sanders/ig
-  var clintonRegex = /clinton|hillary|Hillary Clinton/ig
-
-  var tweetCount = 0
+  var watchList = ['trump', 'rubio', 'carson', 'cruz', 'kasich', 'bernie', 'clinton'];
 
   var hashTagFinder = /(#[a-z0-9][a-z0-9\-_]*)/ig
 
-
-   var stream = T.stream('statuses/filter', { track: watchList })
-
+  var stream = T.stream('statuses/filter', { track: watchList })
 
     stream.on('tweet', function (tweet) {
       text = tweet.text
-      tweetCount ++
-      // console.log('Tweet Count: ', tweetCount)
+      candidates.forEach( function(element, index, array) {
+        if (element.regex.test(text)) {
+          element.tweetCount += 1;
+          element.hashTags = hashtagMapperCounter(element.hashTags, text);
+          element.sentiment = sentimentCounter(element.sentiment, text);
+          element.positivePercent = positivePercent(element.sentiment);
+          element.topHashTags = topFiveHashTags(element.hashTags);
+        };
+      });
 
-      if (trumpRegex.test(text)) {
-        trumpCount += 1
-        trumpTags = hashtagMapperCounter(trumpTags, text);
-        trumpSentimentCounter = sentimentCounter(trumpSentimentCounter, text);
-        // console.log(SentimentPercent(trumpSentimentCounter))
-        // console.log(trumpCount)
-      }
-      if (rubioRegex.test(text)) {
-        rubioCount += 1
-        rubioTags = hashtagMapperCounter(rubioTags, text);
-      }
-      if (carsonRegex.test(text)) {
-        carsonCount += 1
-        carsonTags = hashtagMapperCounter(carsonTags, text);
-      }
-      if (kasichRegex.test(text)) {
-        kasichCount += 1
-        kasichTags = hashtagMapperCounter(kasichTags, text);
-
-      }
-      if (bernieRegex.test(text)) {
-        bernieCount += 1
-        bernieTags = hashtagMapperCounter(bernieTags, text);
-        bernieSentimentCounter = sentimentCounter(bernieSentimentCounter, text);
-        socket.emit('tweetCount', bernieCount)
-        socket.emit('positivePercent', SentimentPercent(bernieSentimentCounter));
-        socket.emit('topHashTags', topFiveHashTags(bernieTags));
-      }
-      if (clintonRegex.test(text)) {
-        clintonCount += 1
-        clintonTags = hashtagMapperCounter(trumpTags, text);
-      }
+      socket.emit('Tweet', candidates);
 
     });
 
@@ -122,9 +127,11 @@ var  twitterStream = function(socket) {
       return sentimentIndex
     }
 
-    var SentimentPercent = function(sentimentIndex) {
+    var positivePercent = function(sentimentIndex) {
       return (sentimentIndex[0] / (sentimentIndex[0] + sentimentIndex[1])) || 0
     }
+
+
 
 }
 

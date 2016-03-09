@@ -17,13 +17,43 @@ var AllCandidates = React.createClass({displayName: "AllCandidates",
   },
   render: function() {
     return (
-      React.createElement("div", {className: "container flex"}, 
-          this.state.candidates.map(function(candidate) {
-            return(
-              React.createElement(Profile, {candidate: candidate})
-              );
-            })
-          
+      React.createElement("div", {className: "wide"}, 
+        React.createElement("div", {className: "container flex", id: "home"}, 
+          React.createElement("a", {href: "#democrat"}, 
+            React.createElement("div", {id: "donkey-big", className: "flex"}, 
+              React.createElement("img", {className: "main-logo", src: "/images/donkey.png"})
+            )
+          ), 
+          React.createElement("a", {href: "#republican"}, 
+            React.createElement("div", {id: "elephant-big", className: "flex"}, 
+              React.createElement("img", {className: "main-logo", src: "/images/elephant.png"})
+            )
+          )
+        ), 
+        React.createElement("div", {className: "container flex", id: "democrat"}, 
+            this.state.candidates.map(function(candidate) {
+                if(candidate.party == 'democrat') {
+                  return(
+                    React.createElement(Profile, {candidate: candidate})
+                  );
+                }else{
+                  return null
+                }
+              })
+            
+        ), 
+        React.createElement("div", {className: "container flex", id: "republican"}, 
+            this.state.candidates.map(function(candidate) {
+                if(candidate.party == 'republican') {
+                  return(
+                    React.createElement(Profile, {candidate: candidate})
+                  );
+                }else{
+                  return null
+                }
+              })
+            
+        )
       )
     )
   }

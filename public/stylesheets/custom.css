@@ -18,6 +18,37 @@ a {
   color: inherit;
 }
 
+.wide {
+  width: 100%;
+}
+
+.main-logo {
+  width: 200px;
+}
+
+#donkey-big {
+  background-color: #00aef3;
+  width: 500px;
+  height: 500px;
+  margin: 30px;
+  border-radius: 100%;
+}
+
+#elephant-big {
+  background-color: #e61b23;
+  width: 500px;
+  height: 500px;
+  border-radius: 100%;
+}
+
+#democrat {
+  background-color: #00aef3;
+}
+
+#republican {
+  background-color: #e61b23;
+}
+
 body {
   background-color: white;
 }
@@ -28,6 +59,7 @@ body {
 
 .profile {
   width: 300px;
+  margin: 10px;
   /*border: #454552 solid 5px;*/
 }
 
@@ -112,7 +144,7 @@ body {
 
 .container {
   width: 100%;
-  max-width: 600px;
+  height: 100vh;
   /*border: black solid 2px;*/
 }
 

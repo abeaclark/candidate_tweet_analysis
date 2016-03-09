@@ -16,13 +16,43 @@ var AllCandidates = React.createClass({
   },
   render: function() {
     return (
-      <div className="container flex">
-          {this.state.candidates.map(function(candidate) {
-            return(
-              <Profile candidate={candidate} />
-              );
-            })
-          }
+      <div className="wide">
+        <div className="container flex" id="home">
+          <a href="#democrat">
+            <div id="donkey-big" className="flex">
+              <img className="main-logo" src="/images/donkey.png" />
+            </div>
+          </a>
+          <a href="#republican">
+            <div id="elephant-big" className="flex">
+              <img className="main-logo" src="/images/elephant.png" />
+            </div>
+          </a>
+        </div>
+        <div className="container flex" id="democrat">
+            {this.state.candidates.map(function(candidate) {
+                if(candidate.party == 'democrat') {
+                  return(
+                    <Profile candidate={candidate} />
+                  );
+                }else{
+                  return null
+                }
+              })
+            }
+        </div>
+        <div className="container flex" id="republican">
+            {this.state.candidates.map(function(candidate) {
+                if(candidate.party == 'republican') {
+                  return(
+                    <Profile candidate={candidate} />
+                  );
+                }else{
+                  return null
+                }
+              })
+            }
+        </div>
       </div>
     )
   }

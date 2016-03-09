@@ -23,7 +23,7 @@ var Profile = React.createClass({displayName: "Profile",
   render: function() {
     return (
       React.createElement("div", {className: "profile"}, 
-        React.createElement(PhotoAndName, {photoURL: this.state.photURL, name: this.state.name}), 
+        React.createElement(PhotoAndName, {name: this.state.name, photoURL: this.state.photoURL}), 
         React.createElement("div", {className: "sentiment-title flex"}, "Sentiment"), 
         React.createElement(Chart, {negative: this.state.negative, positive: this.state.positive}), 
         React.createElement("div", {className: "sentiment-title flex"}, "Tweet Count"), 

@@ -1,3 +1,5 @@
+[![VIDEO PITCH](http://img.youtube.com/vi/TqnhmkyBQrk/0.jpg)](http://www.youtube.com/watch?v=TqnhmkyBQrk "Presidential Candidate Tweet Tracker")
+
 ### What is Candidate Tweet Analysis?
  
 Tracks all of Twitter's tweets and shows metrics for each candidate:
